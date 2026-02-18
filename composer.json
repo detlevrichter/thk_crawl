@@ -1,0 +1,22 @@
+{
+    "require": {
+        "rajentrivedi/tokenizer-x": "^1.0",
+        "php-curl-class/php-curl-class": "^9.19",
+        "openai-php/client": "^0.10.1",
+        "symfony/http-client": "^7.1",
+        "nyholm/psr7": "^1.8",
+        "guzzlehttp/guzzle": "^7.9",
+        "jfcherng/php-diff": "^6.16",
+        "league/html-to-markdown": "^5.1"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    },
+    "autoload": {
+        "psr-4": {
+          "AIConnection\\":"app/"
+        }
+      }
+}
