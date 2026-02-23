@@ -42,14 +42,14 @@ module.exports = {
   });
     await page.waitForSelector('body', { timeout: 5_000 });
     await autoScroll(page, 10);
-    await page.screenshot({path: '/var/www/project/public/dist/img/screen.png',fullPage:true});
+    await page.screenshot({path: '/var/www/html/public/dist/img/screen.png',fullPage:true});
     await page.waitForNetworkIdle();
     // ist vielleicht ein button und vielleicht ist der Text nicht "2"
     //const nextPage = await getByText(page, "a", "2");
     //await nextPage.click();
     //await page.waitForNetworkIdle();
 
-    await page.screenshot({path: '/var/www/project/public/dist/img/screen2.png',fullPage:true});
+    await page.screenshot({path: '/var/www/html/public/dist/img/screen2.png',fullPage:true});
     let stuff = await page.content();
 
 

@@ -224,7 +224,7 @@ class Crawl extends Model
         foreach($masterCrawlURLs as $masterCrawlURL ){
             $parsedURL = parse_url($masterCrawlURL->URL);
 
-            $command = "sudo -u server /usr/bin/node " . dirname(__DIR__) . "/pup.js ". $masterCrawlURL->URL;
+            $command = "/usr/bin/node " . dirname(__DIR__) . "/pup.js ". $masterCrawlURL->URL;
             exec($command, $output, $return_var);
             // entfernen leerer Elemente
             $output = array_filter($output);
@@ -278,7 +278,7 @@ class Crawl extends Model
             $this->setProgress(round($i/$gesamtSeiten,3)*100, 'KI fragen - Seite '. $i .' von ' . $gesamtSeiten . ' davon schlechte Seiten: '. $badPagesCount);
             echo ('<strong>Crawle ' . ' Detailseite</strong> <small>' . $crawlListURL->url . '</small>');
             echo ('Hole Quelltext');
-            $command = "sudo -u server /usr/bin/node " . dirname(__DIR__) . "/pup.js " . $crawlListURL->url;
+            $command = "/usr/bin/node " . dirname(__DIR__) . "/pup.js " . $crawlListURL->url;
             exec($command, $output, $return_var);
             // entfernen leerer Elemente
             $output = array_filter($output);
