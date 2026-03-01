@@ -224,6 +224,7 @@ class Crawl extends Model
         foreach($masterCrawlURLs as $masterCrawlURL ){
             $parsedURL = parse_url($masterCrawlURL->URL);
 
+            putenv("HOME=/tmp");
             $command = "/usr/bin/node " . dirname(__DIR__) . "/pup.js ". $masterCrawlURL->URL;
             exec($command, $output, $return_var);
             // entfernen leerer Elemente
