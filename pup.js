@@ -51,7 +51,7 @@ module.exports = {
 
     await page.screenshot({path: '/var/www/html/public/dist/img/screen2.png',fullPage:true});
     let stuff = await page.content();
-
+    await page.close();
 
 
     
