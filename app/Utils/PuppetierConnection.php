@@ -17,7 +17,7 @@ class PuppetierConnection{
         $this->url = $url;
     }
     public function getURLContent($url){
-        $command = "sudo -u server /usr/bin/node " . ROOT_DIR . "/pup.js $url";
+        $command = "/usr/bin/node " . ROOT_DIR . "/pup.js $url";
         exec($command, $output, $return_var);
         $output = array_filter($output);
         return join("\r\n", $output);   

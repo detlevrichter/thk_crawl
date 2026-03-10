@@ -30,7 +30,7 @@ $systemprompt = $_POST['systemprompt'] ?? 'You are a helpful assistent.';
 if ($url ?? false) {
 
   $head = '<h5 class="card-title">Browser</h5> ';
-  $command = "sudo -u server /usr/bin/node " . dirname(__DIR__) . "/pup.js $url";
+  $command = "/usr/bin/node " . dirname(__DIR__) . "/pup.js $url";
   exec($command, $output, $return_var);
   // entfernen leerer Elemente
   $output = array_filter($output);

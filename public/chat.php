@@ -33,7 +33,7 @@ $url = preg_replace('~[^a-zA-Z\./:-]*~', '', $_GET['web']);
   <div class="container">
     <?php
   
-      $command = "sudo -u server /usr/bin/node " . __DIR__ . "/chatgpt.js $url";
+      $command = "/usr/bin/node " . __DIR__ . "/chatgpt.js $url";
       exec($command, $output, $return_var);
       $output = array_filter($output);
       $echo =  (join("\r\n", $output));
