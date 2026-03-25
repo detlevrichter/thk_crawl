@@ -32,7 +32,7 @@ $methode = 1;
 if ($url ?? false) {
  
   $head = '<h5 class="card-title">Browser</h5> ';
-  $command = "sudo -u server /usr/bin/node " . dirname(__DIR__) . "/pup.js $url $methode";
+  $command = NODEJS_EXE . " " . dirname(__DIR__) . "/pup.js $url $methode";
   exec($command, $output, $return_var);
   // entfernen leerer Elemente
   $output = array_filter($output);

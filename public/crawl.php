@@ -44,7 +44,7 @@ foreach($competencies as $competence){
 foreach($crawlListURLs as $crawlListURL ){
   verbose('<strong>Crawle '.' Detailseite</strong> <small>'.$crawlListURL->url.'</small>');
   verbose('Hole Quelltext');
-  $command = "sudo -u server /usr/bin/node " . dirname(__DIR__) . "/pup.js ". $crawlListURL->url;
+  $command = NODEJS_EXE . " " . dirname(__DIR__) . "/pup.js ". $crawlListURL->url;
   exec($command, $output, $return_var);
   // entfernen leerer Elemente
   $output = array_filter($output);
