@@ -53,18 +53,7 @@ module.exports = {
     let stuff = await page.content();
 
 
-
-    
-   // const bodyHandle = await page.$('body');
-    //const stuff = await page.evaluate(body => body.innerHTML, bodyHandle);
-    //await bodyHandle.dispose();
-
-   //  const stuff = await page.evaluate(() => 
-   //    document.querySelector('.favdescription').outerHTML
-   // favdescription fehlt
-    // );
-  
-    //Only for testing
+    await page.close();
     await browser.close(); 
     return await stuff;
 }
