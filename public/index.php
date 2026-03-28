@@ -21,14 +21,15 @@ $echo = '';
 $source = '';
 $url = '';
 $markdown = '';
-$url = preg_replace('~[^a-zA-Z0-9#\?\./:-]*~', '', $_POST['web']);
-$url =   $_POST['web'] ;
-$preprompt = $_POST['preprompt'];
-$prompt = $_POST['prompt'];
-$model = $_POST['model'];
+$url = preg_replace('~[^a-zA-Z0-9#\?\./:-]*~', '', $_POST['web']??'');
+$url =   $_POST['web'] ?? '';
+$preprompt = $_POST['preprompt']?? '';
+$prompt = $_POST['prompt']?? '';
+$model = $_POST['model']?? '';
 $source = $_POST['source'] ?? $source;
 $systemprompt = !empty($_POST['systemprompt']) ? $_POST['systemprompt'] : 'You are a helpful assistant.';
 $methode = 1;
+$nextButtonDetectionMessage = '';
 if ($url ?? false) {
  
   $head = '<h5 class="card-title">Browser</h5> ';
@@ -46,7 +47,6 @@ if ($url ?? false) {
     }
   }
   //print_r($matches); die;
-  $nextButtonDetectionMessage = '';
   if($nextButtonFound){
     $nextButtonDetectionMessage = 'Es wurde ein "next" Button auf der Seite gefunden. Das deutet auf eine Pagination hin. Falls die aktuelle Seite keine Pagination hat, meldet dieses bitte!';
   }else{
