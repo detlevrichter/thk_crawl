@@ -76,17 +76,8 @@ foreach($crawlListURLs as $crawlListURL ){
                  json_encode($examplesArray, JSON_PRETTY_PRINT) . "\n" .
                  '</example>';
                  
-          /*  $response =  $this->makeRequest($client, [
-                'messages' => [
-                    ['role' => 'system', 'content' =>  $basicEventInfoMessage],
-                    ['role' => 'user', 'content' => $message],
-                ],
-                'response_format' => [
-                    'type' => 'json_object',
-                ],
-            ]);*/
- //echo $basicEventInfoMessage; die;
-  $answers = $client->chat(  $markdown , $model, $basicEventInfoMessage);
+
+  $answers = $client->chat(  $markdown . "\n" . $basicEventInfoMessage , $model, 'You are a helpful assistant.');
   $offer = null;
   foreach ($answers as $answer) {
     verbose( '<br><strong>Ergebnis</strong><hr>'.nl2br($answer) . '<hr>');
