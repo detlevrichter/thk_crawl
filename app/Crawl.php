@@ -116,10 +116,10 @@ class Crawl extends Model
             implode(', ', $columns),
             implode(', ', $placeholders)
         ). " ON DUPLICATE KEY UPDATE updated_at = CURRENT_TIMESTAMP";
- 
+
         $stmt = self::$connection->prepare($sql);
         $result = $stmt->execute($params);
- 
+
         // PK nachziehen
         if ($result && !isset($this->attributes[$this->primaryKey])) {
             $this->attributes[$this->primaryKey] = self::$connection->lastInsertId();
@@ -139,7 +139,7 @@ class Crawl extends Model
 
         $enty->table = self::CRAWL_LIST_TABLE;
         $enty->save();
-   
+
 
     }
     public function setGoodPage(string $url, $markdown = ''){
@@ -153,7 +153,7 @@ class Crawl extends Model
 
         $enty->table = self::CRAWL_LIST_TABLE;
         $enty->save();
-   
+
 
     }
 /**
@@ -204,7 +204,7 @@ class Crawl extends Model
                 }
             }
         }
-        return $gesamt; 
+        return $gesamt;
     }
     public function harvestDetailUrls(string $masterUrl, $masterCrawlURL = null) : array{
         $options = '{}';
@@ -226,8 +226,8 @@ class Crawl extends Model
     }
     public function composeAndSaveDetailUrl(string $detailUrl, stdClass $masterCrawlURL) : int {
         $teilsumme = 0;
-        $parsedMasterURL = parse_url($masterCrawlURL->URL); 
-        $parsedDetailURL = parse_url($detailUrl); 
+        $parsedMasterURL = parse_url($masterCrawlURL->URL);
+        $parsedDetailURL = parse_url($detailUrl);
         if(!isset($parsedDetailURL['host'])){
             $detailUrl = '/' . ltrim($detailUrl, '/');
             $detailUrl = $parsedMasterURL['scheme'].'://'.$parsedMasterURL['host']. $detailUrl;
@@ -249,15 +249,72 @@ class Crawl extends Model
         return $teilsumme;
     }
 
+    /**
+     * Prüft anhand der robots.txt des Hosts, ob $url gecrawlt werden darf.
+     * Fehlt die robots.txt oder ist sie nicht erreichbar, gilt das Crawlen als erlaubt.
+     * Im Gegensatz zu Show::robots_allowed() erzeugt das hier bei fehlender/nicht erreichbarer
+     * robots.txt keine PHP-Warnung.
+     */
+    private function robotsAllowed(string $url): bool
+    {
+        $parsed = parse_url($url);
+        if (!isset($parsed['scheme'], $parsed['host'])) {
+            return true;
+        }
+
+        $target = "{$parsed['scheme']}://{$parsed['host']}/robots.txt";
+        $context = stream_context_create([
+            'http' => ['timeout' => 5, 'ignore_errors' => true],
+            'https' => ['timeout' => 5, 'ignore_errors' => true],
+        ]);
+        $robotstxt = @file_get_contents($target, false, $context);
+        $statusLine = $http_response_header[0] ?? '';
+
+        // keine/kaputte robots.txt, 4xx/5xx-Antwort oder HTML-Fehlerseite statt Textdatei -> erlaubt
+        if ($robotstxt === false || trim($robotstxt) === ''
+            || preg_match('~\s[45]\d\d\s~', $statusLine)
+            || stripos($robotstxt, '<body') !== false) {
+            return true;
+        }
+
+        $path = $parsed['path'] ?? '/';
+        $rules = [];
+        $ruleApplies = false;
+        $line = strtok($robotstxt, "\r\n");
+        while ($line !== false) {
+            $line = trim($line);
+            if ($line === '') {
+                $line = strtok("\r\n");
+                continue;
+            }
+            if (preg_match('/^User-agent:\s*(.*)/i', $line, $match)) {
+                $ruleApplies = (trim($match[1]) === '*');
+            } elseif ($ruleApplies && preg_match('/^Disallow:\s*(.*)/i', $line, $regs)) {
+                $rule = trim($regs[1]);
+                if ($rule !== '') {
+                    $rules[] = $rule;
+                }
+            }
+            $line = strtok("\r\n");
+        }
+
+        foreach ($rules as $rule) {
+            if (strpos($path, $rule) === 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public function crawl(bool $re = false){
         $crawlListTable = 'crawl_list';
         $this->badPagesCount = 0;
         if($re){
-            $crawlListURLs = DB::DB()->query("SELECT * FROM $crawlListTable WHERE status LIKE 'FALSE' ");   
+            $crawlListURLs = DB::DB()->query("SELECT * FROM $crawlListTable WHERE status LIKE 'FALSE' ");
         }else{
             $crawlListURLs = DB::DB()->query("SELECT * FROM $crawlListTable ");
         }
-        $gesamtSeiten = count((array)$crawlListURLs); 
+        $gesamtSeiten = count((array)$crawlListURLs);
         $markdown = '';
         $result = false;
         $i = 0;
@@ -266,6 +323,14 @@ class Crawl extends Model
             $i++;
             $this->setProgress(round($i/$gesamtSeiten,3)*100, 'KI fragen - Seite '. $i .' von ' . $gesamtSeiten . ' davon schlechte Seiten: '. $this->badPagesCount);
             echo ('<strong>Crawle ' . ' Detailseite</strong> <small>' . $crawlListURL->url . '</small>');
+
+            if (!$re && !$this->robotsAllowed($crawlListURL->url)) {
+                echo ('<br><em>Durch robots.txt für Crawler gesperrt, Seite wird übersprungen.</em>');
+                $this->setBadPage($crawlListURL->url, 'Durch robots.txt für Crawler gesperrt.');
+                $this->badPagesCount++;
+                continue;
+            }
+
             // beim recrawlen muss man den Quelltext nich noch mal holen, da ist er ja schon da
             if($re){
                 $markdown = $crawlListURL->markup;
@@ -280,7 +345,7 @@ class Crawl extends Model
                 $this->setBadPage($crawlListURL->url, $markdown);
                 $this->badPagesCount++;
             }
-            
+
         }
     }
 
@@ -339,7 +404,7 @@ class Crawl extends Model
         return true;
     }
     /**
-     * 
+     *
      */
     public function runCrawl(string $progressFile){
         $this->progressFile = $progressFile;
@@ -354,7 +419,7 @@ class Crawl extends Model
     }
 
     /**
-     * 
+     *
      */
     public function setProgress(int $i, $job = 'working'){
         file_put_contents($this->progressFile, json_encode([
