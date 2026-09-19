@@ -1,4 +1,14 @@
 const puppeteer = require('puppeteer');
+const fs = require('fs');
+const debugLogSetting = false;
+const logFile = __dirname + '/pup-debug.log';
+function debugLog(msg) {
+    try {
+        if(debugLogSetting){
+            fs.appendFileSync(logFile, `[${new Date().toISOString()}] ${msg}\n`);
+        }
+    } catch (e) {}
+}
 
 module.exports = {
    mypup : async function(url) {
@@ -16,7 +26,7 @@ module.exports = {
                     window.scrollBy(0, distance);
                     totalHeight += distance;
                     scrolls++;  // increment counter
-    
+
                     // stop scrolling if reached the end or the maximum number of scrolls
                     if(totalHeight >= scrollHeight - window.innerHeight || scrolls >= maxScrolls){
                         clearInterval(timer);
@@ -38,39 +48,39 @@ module.exports = {
             if (!Array.isArray(actions)) {
                 actions = [actions];
             }
-            
-            
+
+
             for (const action of actions) {
                 switch (action.action) {
-                    
+
                     case "click":
-                        
+
                         await page.waitForSelector(action.selector);
                         await page.evaluate(selector => {
                                 document.querySelector(selector)?.click();
                             }, action.selector);
                         await page.screenshot({path:  __dirname + '/public/dist/img/screen3.png',fullPage:true});
-                         
+
 
                         break;
-                        
-                        
+
+
                     case "clickUntilStable": {
-                        
+
                         const maxClicks = action.maxClicks ?? 5;
-                        
+
                         for (let i = 0; i < maxClicks; i++) {
-                       
+
                             // Prüfen, ob der "Mehr laden"-Container bereits versteckt ist
-                 
-                            
+
+
                             // Button suchen
                             const button = await page.$(action.selector);
-                  
+
                             if (!button) {
                                 break;
                             }
-                   
+
                           //  await button.click();
                             await page.evaluate(selector => {
                                 document.querySelector(selector)?.click();
@@ -78,12 +88,12 @@ module.exports = {
 
                             // Warten bis neue Inhalte geladen wurden
                             await page.waitForNetworkIdle();
-                            
+
                         }
-                        
+
                         break;
                     }
-                    
+
                     default:
                         throw new Error(
                             `Unbekannte Action: ${JSON.stringify(action)}`
@@ -91,10 +101,11 @@ module.exports = {
                     }
                 }
             }
-                
+
         const uri = (process.argv[2] || 'http://zomboo.com');
         const params = JSON.parse(process.argv[3] || "{}");
-        const cleanUrl = new URL(uri).href;
+        const cleanUri = uri.replace(/&amp;/g, '&');
+        const cleanUrl = new URL(cleanUri).href;
         const browser = await puppeteer.launch({
         headless: true,
         executablePath: process.env.CHROME_PATH || undefined,
@@ -105,6 +116,7 @@ module.exports = {
             await page.setJavaScriptEnabled(true);
             await page.setViewport({ width: 1200, height: 800 });
             const response = await page.goto(cleanUrl, { waitUntil: 'networkidle2' });
+            debugLog(`URL: ${cleanUrl} STATUS: ${response.status()} HEADERS: ${JSON.stringify(response.headers())}`);
             await page.waitForSelector('body', { timeout: 5_000 });
             await autoScroll(page, 10);
             await page.screenshot({path:  __dirname + '/public/dist/img/screen.png',fullPage:true});
@@ -152,17 +164,19 @@ module.exports = {
                 });
 
             });
-            
+
             let stuff = await page.content();
-            if (stuff.includes("Access Denied") || stuff.length < 500 || !response.ok()) {
+            if (stuff.includes("Access Denied") || stuff.includes("Es ist ein Fehler aufgetreten") || stuff.length < 500 || !response.ok()) {
+            debugLog(`CONTENT-CHECK-FAILED: len=${stuff.length} status=${response.status()}`);
             return 'FALSE Access Denied';
             }
 
             await page.close();
-            await browser.close(); 
+            await browser.close();
             return await stuff;
 
         } catch (error) {
+            debugLog(`EXCEPTION: ${error.message}`);
             return 'ERROR: ' + error.message;
         } finally {
             // Dieser Block wird IMMER ausgeführt
@@ -170,4 +184,7 @@ module.exports = {
         }
     }
 }
-module.exports.mypup().then((r)=>(console.log(r)))
+
+if (require.main === module) {
+    module.exports.mypup(process.argv[2]).then((r)=>(console.log(r)));
+}
