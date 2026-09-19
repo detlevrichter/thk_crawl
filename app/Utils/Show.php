@@ -60,8 +60,7 @@ class Show{
                 $result = $this->client->chat()->create($prompt);
                 $answers[] = $result->choices[0]->message->content;
            } catch (\Throwable $th) {
-            //throw $th;
-                $answers[] = 'Keine Antwort von der AI - :c';
+                $answers[] = 'Keine Antwort von der AI - :c (' . $th->getMessage() . ')';
            }
         }
         return $answers;

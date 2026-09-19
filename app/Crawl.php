@@ -211,7 +211,7 @@ class Crawl extends Model
         if($masterCrawlURL){
             $options = json_encode(json_decode($masterCrawlURL->customCommands));
         }
-        $command = NODEJS_EXE . " " . dirname(__DIR__) . "/pup.js \"". $masterUrl."\" " . escapeshellarg( $options );
+        $command = NODEJS_EXE . " " . dirname(__DIR__) . "/pup.js " . escapeshellarg($masterUrl) . " " . escapeshellarg($options);
 
         exec($command, $output, $return_var);
       //  exec($command . " 2>&1", $output, $return_var);
@@ -287,7 +287,7 @@ class Crawl extends Model
 
     public function getMarkdown(stdClass $crawlListURL) : string{
             echo ('Hole Quelltext');
-            $command = NODEJS_EXE . " " . dirname(__DIR__) . "/pup.js \"" . $crawlListURL->url ."\"";
+            $command = NODEJS_EXE . " " . dirname(__DIR__) . "/pup.js " . escapeshellarg($crawlListURL->url);
             exec($command, $output, $return_var);
             // entfernen leerer Elemente
             $output = array_filter($output);

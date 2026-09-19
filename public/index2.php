@@ -11,10 +11,7 @@ $client = new Show();
 $converter = new HtmlConverter();
 $converter->getConfig()->setOption('strip_tags', true);
 $models = [
-  'meta-llama-3-8b-instruct',
-  'mixtral-8x7b-instruct',
-  'meta-llama-3-70b-instruct',
-  'qwen2-72b-instruct',
+  'openai-gpt-oss-120b',
 ];
 $echo = '';
 $source = '';
@@ -30,7 +27,7 @@ $systemprompt = $_POST['systemprompt'] ?? 'You are a helpful assistent.';
 if ($url ?? false) {
 
   $head = '<h5 class="card-title">Browser</h5> ';
-  $command = NODEJS_EXE . " " . dirname(__DIR__) . "/pup.js $url";
+  $command = NODEJS_EXE . " " . dirname(__DIR__) . "/pup.js " . escapeshellarg($url);
   exec($command, $output, $return_var);
   // entfernen leerer Elemente
   $output = array_filter($output);

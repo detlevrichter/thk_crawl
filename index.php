@@ -79,7 +79,7 @@ $url = preg_replace('~[^a-zA-Z\./:-]*~', '', $_GET['web']);
 
     if ($_GET['methode'] == 'browser') {
       echo '<h2>Browser ' . $copyme . '</h2><textarea style="text-align:left" id="markup">';
-      $command = NODEJS_EXE . " " . __DIR__ . "/pup.js $url";
+      $command = NODEJS_EXE . " " . __DIR__ . "/pup.js " . escapeshellarg($url) ;
       exec($command, $output, $return_var);
       $output = array_filter($output);
       $echo =  (join("\r\n", $output));

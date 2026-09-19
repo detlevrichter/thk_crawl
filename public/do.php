@@ -140,9 +140,10 @@
                     fetch('progress.php')
                         .then(r => r.json())
                         .then(data => {
-                            bar.value = data.progress;
-                            status.textContent = `Fortschritt: ${data.progress}% (${data.status})`;
-                            job.textContent = `${data.job}`;
+                            bar.value = data.progress || 0;
+                            status.textContent = `Fortschritt: ${data.progress || 0}% (${data.status || 'unbekannt'})`;
+                            job.textContent = data.job || '';
+
                             if (data.status === 'done') {
                                 clearInterval(pollingInterval);
                                 status.textContent = '✅ Crawl abgeschlossen!';

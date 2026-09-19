@@ -11,18 +11,13 @@ $client = new Show();
 $converter = new HtmlConverter();
 $converter->getConfig()->setOption('strip_tags', true);
 $models = [
-  'meta-llama-3.1-8b-instruct',
-  'mistral-large-instruct',
-  'meta-llama-3.1-70b-instruct',
-  'qwen2.5-72b-instruct',
-  'deepseek-r1-distill-llama-70b',
+  'openai-gpt-oss-120b',
 ];
 $echo = '';
 $source = '';
 $url = '';
 $markdown = '';
-$url = preg_replace('~[^a-zA-Z0-9#\?\./:-]*~', '', $_POST['web']??'');
-$url =   $_POST['web'] ?? '';
+$url = $_POST['web'] ?? '';
 $preprompt = $_POST['preprompt']?? '';
 $prompt = $_POST['prompt']?? '';
 $model = $_POST['model']?? '';
@@ -33,7 +28,7 @@ $nextButtonDetectionMessage = '';
 if ($url ?? false) {
  
   $head = '<h5 class="card-title">Browser</h5> ';
-  $command = NODEJS_EXE . " " . dirname(__DIR__) . "/pup.js $url $methode";
+  $command = NODEJS_EXE . " " . dirname(__DIR__) . "/pup.js " . escapeshellarg($url) . " " . escapeshellarg($methode);
   exec($command, $output, $return_var);
   // entfernen leerer Elemente
   $output = array_filter($output);
