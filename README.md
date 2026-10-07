@@ -72,20 +72,20 @@ Dieser Projektabschnitt umfasste:
 
 ```mermaid
 flowchart LR
-    subgraph DB[(MySQL / MariaDB)]
-        CM[crawl_master<br/>Quellen & Prompt-Teile]
-        CL[crawl_list<br/>Detail-URLs & Markdown]
-        CT[competency_types<br/>Kompetenzen]
-        PR[prompt<br/>Basis-Prompt]
-        OF[offers]
-        OC[offer_competencies]
+    subgraph DB["MySQL / MariaDB"]
+        CM[("crawl_master<br/>Quellen und Prompt-Teile")]
+        CL[("crawl_list<br/>Detail-URLs und Markdown")]
+        CT[("competency_types<br/>Kompetenzen")]
+        PR[("prompt<br/>Basis-Prompt")]
+        OF[("offers")]
+        OC[("offer_competencies")]
     end
 
-    UI[Weboberfläche<br/>public/do.php] -->|startet| RUN[run_crawl.php<br/>Hintergrundprozess]
-    RUN --> CRAWL[Crawl.php]
-    CRAWL -->|ruft auf| PUP[pup.js<br/>Puppeteer / Chromium]
+    UI["Weboberfläche<br/>public/do.php"] -->|startet| RUN["run_crawl.php<br/>Hintergrundprozess"]
+    RUN --> CRAWL["Crawl.php"]
+    CRAWL -->|ruft auf| PUP["pup.js<br/>Puppeteer / Chromium"]
     PUP -->|HTML| CRAWL
-    CRAWL -->|Markdown + Prompt| LLM[LLM<br/>OpenAI-kompatible API]
+    CRAWL -->|"Markdown + Prompt"| LLM["LLM<br/>OpenAI-kompatible API"]
     LLM -->|JSON| CRAWL
 
     CM --> CRAWL
