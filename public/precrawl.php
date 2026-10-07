@@ -39,7 +39,7 @@ foreach($masterCrawlURLs as $masterCrawlURL ){
   // scheme host path
   verbose('<strong>Crawle '.$masterCrawlURL->Seite.' Übersichsseite</strong> <small>'.$masterCrawlURL->URL.'</small>');
   verbose('Hole Quelltext');
-  $command = NODEJS_EXE . " " . dirname(__DIR__) . "/pup.js ". $masterCrawlURL->URL;
+  $command = NODEJS_EXE . " " . dirname(__DIR__) . "/pup.js " . escapeshellarg($masterCrawlURL->URL);
   exec($command, $output, $return_var);
   // entfernen leerer Elemente
   $output = array_filter($output);
