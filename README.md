@@ -556,7 +556,6 @@ Hilfreiche Werkzeuge:
 - Pro Detailseite wird genau ein Angebot erwartet. Seiten mit mehreren Angeboten werden vom LLM in der Regel mit `FALSE` beantwortet.
 - Hintergrundprozess und Abbruch-Funktion funktionieren nur unter Linux/Unix.
 - Die Qualität der Ergebnisse hängt stark vom eingesetzten Modell und vom Prompt ab.
-- Ein Teil des Codes (`Prompt copy.php`, `index2.php`, `chat.php`, `curl.php`, `t.js`) ist experimentell oder veraltet.
 
 ---
 
@@ -564,13 +563,9 @@ Hilfreiche Werkzeuge:
 
 Mögliche nächste Schritte:
 
-- Verwaltungsoberfläche für `crawl_master` und `competency_types` statt direkter Datenbankpflege
-- vollständige Migrationen für alle Spalten und ein reproduzierbares Schema
 - Erkennung geänderter Seiten (Hash des Markdowns), damit nur neue oder geänderte Seiten an das LLM gehen
 - Validierung der LLM-Antworten gegen ein JSON-Schema (bzw. „Structured Outputs“ des LLM)
 - Authentifizierung für die Weboberfläche
-- Container-Setup (Docker) für eine einfache Installation
-- automatisierte Tests und Evaluation der Extraktionsqualität
 
 ---
 
@@ -588,7 +583,7 @@ CRAWL wurde im Rahmen des Projekts **Digitalkompetenz.nrw** an der TH Köln entw
 
 Forschungs- und Entwicklungsprojekt.
 Nicht als produktives Web-Scraping-Framework gedacht.
-Sicher sind noch Fehlfunktionen und Bugs enthalten. Bug-Reports (Issues) oder direkter Kontakt sind erwünscht. Über Pull Requests würden wir uns sehr freuen!
+Vielleicht sind noch Fehlfunktionen und Bugs enthalten. Bug-Reports (Issues) oder direkter Kontakt sind erwünscht. Über Pull Requests würden wir uns sehr freuen!
 
 ## Disclaimer
 
