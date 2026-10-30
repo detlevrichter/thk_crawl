@@ -10,6 +10,13 @@ function debugLog(msg) {
     } catch (e) {}
 }
 
+// Wartet auf Netzwerkruhe, lässt aber hängende Drittanbieter-Requests (z.B. Tracking) zu und bricht nie ab.
+async function settle(page, timeout = 8000) {
+    try {
+        await page.waitForNetworkIdle({ idleTime: 500, concurrency: 2, timeout });
+    } catch (e) {}
+}
+
 module.exports = {
    mypup : async function(url) {
         const  sleep = (ms)=> {
@@ -87,7 +94,7 @@ module.exports = {
                             }, action.selector);
 
                             // Warten bis neue Inhalte geladen wurden
-                            await page.waitForNetworkIdle();
+                            await settle(page);
 
                         }
 
@@ -120,7 +127,7 @@ module.exports = {
             await page.waitForSelector('body', { timeout: 5_000 });
             await autoScroll(page, 10);
             await page.screenshot({path:  __dirname + '/public/dist/img/screen.png',fullPage:true});
-            await page.waitForNetworkIdle();
+            await settle(page);
             await performActions(page, params);
             // ist vielleicht ein button und vielleicht ist der Text nicht "2"
             //const nextPage = await getByText(page, "a", "2");
